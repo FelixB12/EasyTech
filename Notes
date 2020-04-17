@@ -1,0 +1,11 @@
+NodeJs Setup for project:
+
+npm install express *Thats the framwork for nodejs
+npm install nodemon *Reloads the server when ever something changes
+npm install morgan *Logs requests
+npm install body-parser *for parsing requests
+npm install mongoose *MongoDB 
+
+To run the mongoDB go to "C:\Program Files\MongoDB\Server\4.2\bin" and run mongod 
+ - This will start the dbserver. Leave the CMD running to keep it up.
+ - To connect to the db: mongodb://localhost:27017
