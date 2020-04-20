@@ -13,6 +13,10 @@ class Navigation extends Component {
             {/* <Nav.Link href="Weather">Weather</Nav.Link> */}
             <Nav.Link href="Portfolio">Portfolio</Nav.Link>
           </Nav>
+          <Nav className="ml-auto">
+            <Nav.Link href="SignUp">Register</Nav.Link>
+            <Nav.Link href="SignIn">Log In</Nav.Link>
+          </Nav>
         </Navbar>
       </div>
     );

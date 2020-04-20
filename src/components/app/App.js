@@ -4,6 +4,8 @@ import Weather from "../weather/weather";
 import Navigation from "../header/navigation";
 import Homepage from "../homepage/homepage";
 import Portfolio from "../portfolio/portfolio";
+import SignUp from "../users/signup";
+import SignIn from "../users/signin";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
@@ -18,6 +20,8 @@ function App() {
           {/*<Route path="/Weather" component={Weather} />*/}
           <Route path="/Portfolio" component={Portfolio} />
           {/*<Route path="/StockTicker" component={StockTicker} /> TODO Add stock ticker*/}
+          <Route path="/SignUp" component={SignUp} />
+          <Route path="/SignIn" component={SignIn} />
         </Switch>
       </Router>
     </div>
