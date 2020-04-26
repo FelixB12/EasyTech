@@ -3,14 +3,20 @@ const app = express();
 const morgan = require("morgan"); // For logging requests
 const mongoose = require("mongoose");
 
+// TODO add additional api routes here
 const productRoutes = require("./api/routes/products");
 const stocksRoutes = require("./api/routes/stocks");
+const signUpRoutes = require("./api/routes/signup");
 
 // DB Connection, TODO If using a db on the cloud server change the connection here
-mongoose.connect("mongodb://localhost:27017", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const db = require("./config/keys");
+mongoose
+  .connect(db.mongoURILocal, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.log(err));
 
 // Log requests
 app.use(morgan("dev"));
@@ -36,10 +42,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // Routes which should handle requests
+// TODO Add additonal routes
 app.use("/products", productRoutes); // When URI start with 'products' use the productRoutes
+app.use("/signup", signUpRoutes);
+// TODO add cookieParser() ???
 //app.use("/stocks", stocksRoutes); // When URI start with 'stocks' use the stocksRoutes
 
-// Anything that goes past the app.use, means that there was nothing suitable found to handle the requests so we error handle them here
+// ERROR HANDLING
+// Anything that goes past the above means that there was nothing suitable found to handle the requests so we error handle them here
 app.use((req, res, next) => {
   const error = new Error("Not Found");
   error.status = 404;

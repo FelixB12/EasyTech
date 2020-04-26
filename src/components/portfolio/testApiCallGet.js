@@ -1,6 +1,6 @@
 import React from "react";
 
-class Portfolio extends React.Component {
+class TestAPICall extends React.Component {
   // Test User API Calls
 
   constructor(props) {
@@ -45,4 +45,4 @@ class Portfolio extends React.Component {
   }
 }
 
-export default Portfolio;
+export default TestAPICall;
