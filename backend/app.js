@@ -43,10 +43,10 @@ app.use(express.json());
 
 // Routes which should handle requests
 // TODO Add additonal routes
+// TODO add cookieParser() ???
 app.use("/products", productRoutes); // When URI start with 'products' use the productRoutes
 app.use("/signup", signUpRoutes);
-// TODO add cookieParser() ???
-//app.use("/stocks", stocksRoutes); // When URI start with 'stocks' use the stocksRoutes
+app.use("/stocks", stocksRoutes); // When URI start with 'stocks' use the stocksRoutes
 
 // ERROR HANDLING
 // Anything that goes past the above means that there was nothing suitable found to handle the requests so we error handle them here
