@@ -16,6 +16,7 @@ const TIME_SERIES = "?timeseries=";
 const FROM = "?from=";
 const TO = "&to=";
 
+const API_KEY = "?apikey=" + process.env.API_KEY_FMP;
 /**
  * * Once go live use "https://fmpcloud.io/" with API key
  *
@@ -44,7 +45,7 @@ var financialModelingPrep = {
    * JSON -> symbol, price
    */
   getCurrentStockPrice: (symbol) => {
-    return axios.get(API_URL + API_VER + REAL_TIME_DATA_API + symbol);
+    return axios.get(API_URL + API_VER + REAL_TIME_DATA_API + symbol + API_KEY);
   },
   /**
    * @param Symbols List ex(AAPL,MSFT)
@@ -55,7 +56,7 @@ var financialModelingPrep = {
    * JSON -> symbol, name, price, changesPercentage, change(Points), etc
    */
   getCompanyQuotes: (symbols) => {
-    return axios.get(API_URL + API_VER + QUOTE + symbols);
+    return axios.get(API_URL + API_VER + QUOTE + symbols + API_KEY);
   },
   /**
    * Real Time
@@ -64,9 +65,16 @@ var financialModelingPrep = {
    */
   getBatchSymbols: (symbols) => {
     //const symList = symbols.join(",");
-    return axios.get(
-      API_URL + API_VER + COMPANY_STOCKS + REAL_TIME_DATA_API + symbols
-    );
+    const url =
+      API_URL +
+      API_VER +
+      COMPANY_STOCKS +
+      REAL_TIME_DATA_API +
+      //   QUOTE +
+      symbols +
+      API_KEY;
+    console.log(url);
+    return axios.get(url);
   },
   /**
    * All available Symbols
@@ -76,7 +84,7 @@ var financialModelingPrep = {
   },
   getHistoricalStockPricesOneMinute: (symbol) => {
     return axios.get(
-      API_URL + API_VER + HISTORICAL_CHART + ONE_MINUTE + symbol
+      API_URL + API_VER + HISTORICAL_CHART + ONE_MINUTE + symbol + API_KEY
     );
   },
   getHistoricalStockPricesOverDays: (symbol, timeRangedays) => {
@@ -86,7 +94,8 @@ var financialModelingPrep = {
         HISTORICAL_PRICE_FULL +
         symbol +
         TIME_SERIES +
-        timeRangedays
+        timeRangedays +
+        API_KEY
     );
   },
   getHistoricalStockPricesOverYears: (symbol, rangeYearOne, rangeYearTwo) => {
@@ -98,7 +107,8 @@ var financialModelingPrep = {
         FROM +
         rangeYearOne +
         TO +
-        rangeYearTwo
+        rangeYearTwo +
+        API_KEY
     );
   },
 };

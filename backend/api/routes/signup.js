@@ -3,7 +3,9 @@ const router = express.Router();
 const mongoose = require("mongoose");
 
 // User Model
-const User = require("../models/user");
+const User = require("../models/users");
+
+// TODO DELETE THIS
 
 // @route POST /User
 // @desc Store new User

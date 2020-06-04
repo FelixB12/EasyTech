@@ -1,0 +1,10 @@
+[
+  {
+    "watchlistName": "Test Watch List 1",
+    "symbols": ["AAPL", "FB", "MSFT", "TSLA"]
+  },
+  {
+    "watchlistName": "Test Watch List 2",
+    "symbols": ["AAPL", "FB", "MSFT", "TSLA"]
+  }
+]

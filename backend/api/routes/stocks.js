@@ -26,6 +26,7 @@ router.get("/singleStock/:symbol", (req, res, next) => {
  */
 router.get("/multipleStocks/", (req, res, next) => {
   const symbols = Array.from(req.query.symbols);
+  console.log(symbols);
   getStocks
     .getBatchSymbols(symbols)
     .then((response) => {

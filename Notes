@@ -9,3 +9,8 @@ npm install mongoose *MongoDB
 To run the mongoDB go to "C:\Program Files\MongoDB\Server\4.2\bin" and run mongod 
  - This will start the dbserver. Leave the CMD running to keep it up.
  - To connect to the db: mongodb://localhost:27017
+ 
+ https://financialmodelingprep.com/api/v3/stock/real-time-price/AAPL?apikey=demo
+ 
+ TODO
+  - Add react transition group

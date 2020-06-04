@@ -18,18 +18,18 @@ export default function TopIndexes() {
 
   useEffect(() => {
     axios
+      // TODO Change to different API call that gets the change % and index name
       .get(API_URL + STOCKS_MULTIPLE_SYMBOLS + "AAPL&symbols=GOOG&symbols=MSFT")
       .then((res) => {
         const data = res.data.companiesPriceList;
-        console.log(res);
         setStocks(data);
       });
-  });
+    // TODO add a catch
+  }, []);
 
   if (stocks) {
     return (
       <div className={classes.root}>
-        {console.log(stocks)}
         <Grid container spacing={1}>
           {Object.keys(stocks).map((key, i) => (
             <Grid item xs={2}>

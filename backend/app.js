@@ -1,18 +1,24 @@
+const dotenv = require("dotenv");
+dotenv.config();
 const express = require("express");
 const app = express();
 const morgan = require("morgan"); // For logging requests
 const mongoose = require("mongoose");
+const passport = require("passport");
 
 // TODO add additional api routes here
 const productRoutes = require("./api/routes/products");
 const stocksRoutes = require("./api/routes/stocks");
 const signUpRoutes = require("./api/routes/signup");
+const watchlistRoutes = require("./api/routes/watchlist");
+const usersRoutes = require("./api/routes/users");
 
 // DB Connection, TODO If using a db on the cloud server change the connection here
 const db = require("./config/keys");
 mongoose
   .connect(db.mongoURILocal, {
     useNewUrlParser: true,
+    useCreateIndex: true,
     useUnifiedTopology: true,
   })
   .then(() => console.log("MongoDB Connected"))
@@ -41,13 +47,17 @@ app.use((req, res, next) => {
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+// Passport
+app.use(passport.initialize());
+
 // Routes which should handle requests
 // TODO Add additonal routes
 // TODO add cookieParser() ???
 app.use("/products", productRoutes); // When URI start with 'products' use the productRoutes
 app.use("/signup", signUpRoutes);
 app.use("/stocks", stocksRoutes); // When URI start with 'stocks' use the stocksRoutes
-
+app.use("/watchlist", watchlistRoutes);
+app.use("/users", usersRoutes);
 // ERROR HANDLING
 // Anything that goes past the above means that there was nothing suitable found to handle the requests so we error handle them here
 app.use((req, res, next) => {
