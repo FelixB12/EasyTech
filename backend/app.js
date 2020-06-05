@@ -6,6 +6,9 @@ const morgan = require("morgan"); // For logging requests
 const mongoose = require("mongoose");
 const passport = require("passport");
 
+// Passport
+app.use(passport.initialize());
+
 // TODO add additional api routes here
 const productRoutes = require("./api/routes/products");
 const stocksRoutes = require("./api/routes/stocks");
@@ -46,9 +49,6 @@ app.use((req, res, next) => {
 // Parse Incoming requst bodies
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-
-// Passport
-app.use(passport.initialize());
 
 // Routes which should handle requests
 // TODO Add additonal routes

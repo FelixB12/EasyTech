@@ -4,8 +4,8 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const passport = require("passport");
-const localStrategy = require("passport-local");
+const passport = require("./../../auth/auth");
+//const passport = require("passport");
 
 // User Model
 const Users = require("../models/users");
@@ -83,50 +83,58 @@ router.post("/register", (req, res) => {
  * @desc Authenticate User / Login
  * @access Public
  */
-router.post("/auth", (req, res) => {
-  const { username, password } = req.body; // Note, username is the email
-  // Validation
-  if (!username || !password) {
-    return res.status(400).json({ msg: "Please enter all fields" });
-  }
 
-  passport.use(new localStrategy((username, password, done) => {}));
+// router.post("/auth", passport.authenticate("local", { session: false }),
+//   (req, res) => {
+//     res.json(req.message);
+//   }
+// );
 
-  // Check for existing User
-  Users.findOne({ username })
-    .then((user) => {
-      if (!user) {
-        res.status(400).json({ msg: "User Doesn't exists" });
-      } else {
-        // Validate password
-        bcrypt.compare(password, user.password).then((isMatch) => {
-          if (!isMatch) {
-            res.status(400).json({ msg: "Invalid Credentials" });
-          } else {
-            jwt.sign(
-              { id: user.id },
-              process.env.JWT_SECRET,
-              { expiresIn: 3600 },
-              (err, token) => {
-                if (err) throw err;
-                res.json({
-                  token,
-                  user: {
-                    id: user.id,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    email: user.email,
-                  },
-                });
-              }
-            );
-          }
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(400).json(err);
-      console.log(err);
-    });
+router.post("/auth", function (req, res, next) {
+  passport.authenticate("local", function (err, user, info) {
+    if (err) {
+      res.json(info);
+      return next(err);
+    }
+    if (user) {
+      jwt.sign(
+        { id: user.id },
+        process.env.JWT_SECRET,
+        { expiresIn: 3600 },
+        (err, token) => {
+          if (err) throw err;
+          res.json({
+            info,
+            token,
+            user: {
+              id: user.id,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              email: user.email,
+            },
+          });
+        }
+      );
+    } else {
+      res.json(info);
+    }
+  })(req, res, next);
 });
+
+// TODO Retrive error when failed to authenticate
+router.get("/profile", function (req, res, next) {
+  passport.authenticate("jwt", function (err, user, info) {
+    if (err) {
+      res.json(info);
+      //return next(err);
+    }
+    if (user) {
+      res.json(info);
+    } else {
+      res.json(info);
+    }
+    res.json("Success");
+  })(req, res, next);
+});
+
 module.exports = router;
