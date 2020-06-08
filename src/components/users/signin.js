@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -8,10 +8,16 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
+import Alert from "@material-ui/lab/Alert";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import axios from "axios";
+import { useInput } from "./../inputforms/customHookInputForm";
+import { API_URL, USER_AUTH } from "./../constants/constants";
+import { useDispatch } from "react-redux";
+import { authenticateUser } from "../../actions/userActions";
 
 function Copyright() {
   return (
@@ -46,8 +52,59 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const displayError = (errMsg) => {
+  return (
+    <div>
+      <Alert severity="error">{errMsg}</Alert>
+    </div>
+  );
+};
+
+const displaySuccess = (successMsg) => {
+  return (
+    <div>
+      <Alert severity="success">{successMsg}</Alert>
+    </div>
+  );
+};
+
 export default function SignIn() {
+  const [resErrMessage, setErrMessage] = useState("");
+  const [resSuccessMessage, setSuccessMessage] = useState("");
   const classes = useStyles();
+  const { value: email, bind: bindEmail, reset: resetEmail } = useInput("");
+  const {
+    value: password,
+    bind: bindPassword,
+    reset: resetPassword,
+  } = useInput("");
+  const dispatch = useDispatch();
+  useEffect(() => {}, [resErrMessage, resSuccessMessage]);
+
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+    console.log(email);
+    if (email && password) {
+      console.log("sending request");
+      axios
+        .post(API_URL + USER_AUTH, { email: email, password: password })
+        .then((res) => {
+          if (res.data.token) {
+            setSuccessMessage(res.data.info.message);
+            setErrMessage("");
+
+            // TODO handle loggedin state differently maybe
+            dispatch(authenticateUser(res.data.user, res.data.token, true));
+          } else {
+            setSuccessMessage("");
+            setErrMessage(res.data.info.message);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -59,7 +116,11 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} onSubmit={handleSubmit} noValidate>
+          {resErrMessage.length > 0 ? displayError(resErrMessage) : ""}
+          {resSuccessMessage.length > 0
+            ? displaySuccess(resSuccessMessage)
+            : ""}
           <TextField
             variant="outlined"
             margin="normal"
@@ -70,6 +131,7 @@ export default function SignIn() {
             name="email"
             autoComplete="email"
             autoFocus
+            {...bindEmail}
           />
           <TextField
             variant="outlined"
@@ -81,6 +143,7 @@ export default function SignIn() {
             type="password"
             id="password"
             autoComplete="current-password"
+            {...bindPassword}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}

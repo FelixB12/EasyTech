@@ -12,7 +12,6 @@ app.use(passport.initialize());
 // TODO add additional api routes here
 const productRoutes = require("./api/routes/products");
 const stocksRoutes = require("./api/routes/stocks");
-const signUpRoutes = require("./api/routes/signup");
 const watchlistRoutes = require("./api/routes/watchlist");
 const usersRoutes = require("./api/routes/users");
 
@@ -54,7 +53,6 @@ app.use(express.json());
 // TODO Add additonal routes
 // TODO add cookieParser() ???
 app.use("/products", productRoutes); // When URI start with 'products' use the productRoutes
-app.use("/signup", signUpRoutes);
 app.use("/stocks", stocksRoutes); // When URI start with 'stocks' use the stocksRoutes
 app.use("/watchlist", watchlistRoutes);
 app.use("/users", usersRoutes);

@@ -93,7 +93,7 @@ router.post("/register", (req, res) => {
 router.post("/auth", function (req, res, next) {
   passport.authenticate("local", function (err, user, info) {
     if (err) {
-      res.json(info);
+      res.json({ info });
       return next(err);
     }
     if (user) {
@@ -116,7 +116,7 @@ router.post("/auth", function (req, res, next) {
         }
       );
     } else {
-      res.json(info);
+      res.json({ info });
     }
   })(req, res, next);
 });

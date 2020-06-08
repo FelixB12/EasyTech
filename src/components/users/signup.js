@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -13,7 +13,9 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import Copyright from "../common/copyright";
-
+import { useInput } from "../inputforms/customHookInputForm";
+import axios from "axios";
+import { API_URL } from "../constants/constants";
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -34,8 +36,100 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function SignUpPage() {
+export default function SignUpPage() {
   const classes = useStyles();
+  const [errFields, setErrFields] = useState({
+    emailError: "",
+    passwordError: "",
+    firstnameError: "",
+    lastnameError: "",
+  });
+  const {
+    value: firstName,
+    bind: bindFirstName,
+    reset: resetFirstName,
+  } = useInput("");
+  const {
+    value: lastName,
+    bind: bindLastName,
+    reset: resetLastName,
+  } = useInput("");
+  const { value: email, bind: bindEmail, reset: resetEmail } = useInput("");
+  const {
+    value: password,
+    bind: bindPassword,
+    reset: resetPassword,
+  } = useInput("");
+
+  const handleSubmit = (evt) => {
+    evt.preventDefault();
+    var validationErr = false;
+    // Screen validation
+    if (!email) {
+      setErrFields({
+        ...errFields,
+        emailError: "Please Enter a valid E=mail Address",
+      });
+      validationErr = true;
+    } else {
+      setErrFields({ ...errFields, emailError: "" });
+      validationErr = false;
+    }
+    if (!password) {
+      setErrFields({ ...errFields, emailError: "Please Enter a Password" });
+      validationErr = true;
+    } else {
+      setErrFields({ ...errFields, emailError: "" });
+      validationErr = false;
+    }
+    if (!firstName) {
+      setErrFields({
+        ...errFields,
+        emailError: "Please Enter your First Name",
+      });
+      validationErr = true;
+    } else {
+      setErrFields({ ...errFields, emailError: "" });
+      validationErr = false;
+    }
+    if (!lastName) {
+      setErrFields({
+        ...errFields,
+        emailError: "Please Enter a your Last Name",
+      });
+      validationErr = true;
+    } else {
+      setErrFields({ ...errFields, emailError: "" });
+      validationErr = false;
+    }
+
+    // TODO Set Val
+
+    if (!validationErr) {
+      axios
+        .post(API_URL + "users/register", {
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          password: password,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            // Rest fields if user was created successfully
+            resetEmail();
+            resetFirstName();
+            resetLastName();
+            resetPassword();
+          }
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
+
+  useEffect(() => {}, [errFields]);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -47,7 +141,7 @@ function SignUpPage() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} validate onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -59,6 +153,7 @@ function SignUpPage() {
                 id="firstName"
                 label="First Name"
                 autoFocus
+                {...bindFirstName}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -70,6 +165,7 @@ function SignUpPage() {
                 label="Last Name"
                 name="lastName"
                 autoComplete="lname"
+                {...bindLastName}
               />
             </Grid>
             <Grid item xs={12}>
@@ -81,6 +177,7 @@ function SignUpPage() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                {...bindEmail}
               />
             </Grid>
             <Grid item xs={12}>
@@ -93,6 +190,7 @@ function SignUpPage() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                {...bindPassword}
               />
             </Grid>
             <Grid item xs={12}>
@@ -120,36 +218,6 @@ function SignUpPage() {
           </Grid>
         </form>
       </div>
-      <Box mt={5}>
-        <Copyright />
-      </Box>
     </Container>
   );
 }
-
-class SignUp extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      firstName: "",
-      lastName: "",
-      emailAddress: "",
-      password: "",
-    };
-  }
-
-  handleChange(event) {
-    this.setState({
-      firstName: event.target.firstName,
-      lastName: event.target.lastName,
-      emailAddress: event.target.emailAddress,
-      password: event.target.password,
-    });
-  }
-
-  handleSubmit(event) {
-    // TODO Validate input and save to db or show error
-  }
-}
-
-export default SignUp;
