@@ -13,11 +13,14 @@ import {
   WATCHLIST_DELETE,
 } from "../components/constants/constants";
 
-export const getWatchlists = () => (dispatch) => {
+export const getWatchlists = (token) => (dispatch) => {
   dispatch(setWatchlistsLoading());
+
+  const configBearer = { headers: { Authorization: "Bearer " + token } };
+
   axios
     // .get(API_URL + GET_SINGLE_WATCHLIST + "5ec9d7cd7aab3e29ccfc8746") // TODO remove watch list id, change to get all from user
-    .get(API_URL + "watchlist/getWatchlists")
+    .get(API_URL + "watchlist/getWatchlists", configBearer)
     .then((result) => {
       dispatch({
         type: GET_WATCHLISTS,
@@ -29,9 +32,9 @@ export const getWatchlists = () => (dispatch) => {
     });
 };
 
-export const deleteWatchlist = (watchlistId) => (dispatch) => {
+export const deleteWatchlist = (watchlistId, token, userId) => (dispatch) => {
   axios
-    .delete(API_URL + WATCHLIST_DELETE + watchlistId)
+    .delete(API_URL + WATCHLIST_DELETE + watchlistId + "&userId=" + userId)
     .then((res) => {
       dispatch({
         type: DELETE_WATCHLIST,
@@ -41,13 +44,15 @@ export const deleteWatchlist = (watchlistId) => (dispatch) => {
     .catch((err) => {
       console.log(err);
     });
-  dispatch(getWatchlists());
+  //dispatch(getWatchlists(token)); // TODO include token
 };
 
-export const createWatchlist = (watchListName) => (dispatch) => {
+export const createWatchlist = (watchListName, user) => (dispatch) => {
   axios
     .post(API_URL + WATCHLIST_CREATE, {
       watchlistName: watchListName,
+      userId: user.user.userData.id,
+
       // TODO Add to what user to save
     })
     .then((res) => {
@@ -60,7 +65,7 @@ export const createWatchlist = (watchListName) => (dispatch) => {
       console.log(err);
       // TODO let user know failed to save
     });
-  dispatch(getWatchlists());
+  //dispatch(getWatchlists(user.user.token));
 };
 
 export const setWatchlistsLoading = () => {

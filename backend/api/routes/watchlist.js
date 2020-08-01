@@ -3,6 +3,8 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const Watchlist = require("../models/watchlist");
 const User = require("../models/users");
+
+const passport = require("../../auth/auth");
 /**
  * //TODO
  * Should we check that the watchlist is asosciated to a valid account?
@@ -15,54 +17,36 @@ const User = require("../models/users");
  */
 // TODO add watchlist to user('userWatchlists'), Check query populate
 router.post("/create", (req, res, next) => {
-  //  const userId = req.body.userId;
-  //var watchlistUserId;
+  const userId = req.body.userId;
   // Object to store in DB
   const watchlist = new Watchlist({
     _id: new mongoose.Types.ObjectId(),
     watchlistName: req.body.watchlistName,
-    // TODO point watchlist to the correct user
-    //accountNumber: req.body.accountNumber,
-    //watchlistId: req.body.watchlistId,
-    //watchlistUser: req.body.userId,
-    symbols: "",
+    watchlistSymbols: undefined,
   });
 
-  console.log(req.body.watchlistName);
-  // Store new watchlist in db
-  watchlist
-    .save()
-    .then((result) => {
-      console.log(result);
-      //   watchlistUserId = result._id;
-      res.status(201).json({
-        message: "Handling POST Requests to /watchlist/create",
-        createdProduct: result,
-      });
-      // Update the User with the new WatchlistId
-      //   User.findByIdAndUpdate(
-      //     { _id: userId },
-      //     { $push: { userWatchlists: watchlistUserId } }
-      //   )
-      //     .then((result) => {
-      //       // What if UserId was not found?
-      //       console.log("User was updated with new watchlist");
-      //     })
-      //     .catch((err) => {
-      //       res.status(500).json(err);
-      //     });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({
-        error: err,
-      });
-    });
+  User.findById(userId, (err, user) => {
+    if (user) {
+      watchlist
+        .save()
+        .then((result) => {
+          user.watchlists.push(watchlist);
+          user.save();
+          res.status(200).json({ info: "Watchlist Created" });
+        })
+        .catch((err) => {
+          res.status(400).json({ info: "Error Occured" });
+        });
+    } else {
+      res.status(400).json({ info: "User does not exist" });
+    }
+  });
 });
 /**
  * Add/Remove Symbols in Watch List
  */
 router.patch("/addSymbol", (req, res, next) => {
+  // TODO Get the watchlist from the user model and add the symble there
   const id = req.body.id;
   const symbol = req.body.watchlistSymbol;
   Watchlist.exists({ _id: id }) // Check if the Watchlist exists with the ID
@@ -156,23 +140,31 @@ router.patch("/removeSymbol", (req, res, next) => {
  * Delete Watchlist from database
  */
 // TODO remove watchlist from user('userWatchlists'), Check query populate
-router.delete("/deleteWatchlist/:watchlistId", (req, res, next) => {
+router.delete("/deleteWatchlist", (req, res, next) => {
   const id = req.query.watchlistId; //Watchlist id
-
-  Watchlist.deleteOne({ _id: id })
+  const userId = req.query.userId;
+  // TODO Fix deleteWatchlist properly
+  Watchlist.findByIdAndDelete({ _id: id })
     .then((result) => {
-      if (result.deletedCount > 0) {
-        console.log("Watchlist deleted");
-        res.status(200).json(result);
-      } else {
-        console.log("Watchlist to delete doesn't exist");
-        res.status(400).json(result);
-      }
+      console.log(result);
+      res.status(200).json("Watchlist From Watchlist Deleted");
     })
     .catch((err) => {
-      res.status(500).json(err);
-      console.log(id);
+      console.log("Error Deleting Watchlist");
+      res.status(500).json("Error Deleting");
     });
+
+  /*
+          User.findByIdAndUpdate({ _id: userId }, { $pull: { watchlists: id } })
+        .then((res) => {
+          console.log("Updated");
+          res.status(200).json("Watchlist From User Deleted");
+        })
+        .catch((err) => {
+          res.status(500).json("Error Deleting");
+        });
+
+    */
 });
 
 /**
@@ -196,41 +188,52 @@ router.get("/getSingleWatchlist/:watchlistId", (req, res, next) => {
 /**
  * Get All watchlists associated to the user
  */
-router.get("/getUserWatchlists", (req, res, next) => {
-  const userId = req.body.userId;
+// router.get("/getWatchlists", (req, res, next) => {
+//   passport.authenticate("jwt", function (err, user, info) {
+//     if (err) {
+//       res.json(info);
+//       //return next(err);
+//     }
+//     if (user) {
+//       res.json(info);
+//     } else {
+//       res.json(info);
+//     }
+//     res.json("Success");
+//   })(req, res, next);
 
-  User.find({ _id: userId })
-    .populate("userWatchlists")
-    .exec()
-    .then((result) => {
-      console.log(result);
-      res.status(200).json(result);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json(err);
-    });
-});
+//   Watchlist.find()
+//     .then((result) => {
+//       console.log(result);
+//       res.status(200).json(result);
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//       res.status(500).json(err);
+//     });
+// });
 
-/**
- * GET ALL WATCHLISTS TEST, TODO DELETE THIS AFTER TESTING
- * TODO DELETE THIS
- */
-/**
- * Get All watchlists associated to the user
- */
-router.get("/getWatchlists", (req, res, next) => {
-  const userId = req.body.userId;
-
-  Watchlist.find()
-    .then((result) => {
-      console.log(result);
-      res.status(200).json(result);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json(err);
-    });
+// TODO Retrive error when failed to authenticate
+router.get("/getWatchlists", function (req, res, next) {
+  passport.authenticate("jwt", function (err, user, info) {
+    if (err) {
+      //   res.json(info);
+      return next(err);
+    }
+    if (user) {
+      console.log(user);
+      User.findById(user.id)
+        .populate("watchlists")
+        .then((result) => {
+          res.json({
+            watchlists: result.watchlists,
+            info: { code: 200, info },
+          });
+        });
+    } else {
+      res.json({ watchlists: [], info: { code: 400, info } });
+    }
+  })(req, res, next);
 });
 
 /**

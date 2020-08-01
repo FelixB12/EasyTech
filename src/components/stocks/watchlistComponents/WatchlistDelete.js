@@ -9,9 +9,10 @@ import { useDispatch } from "react-redux";
 import { deleteWatchlist } from "../../../actions/watchlistActions";
 export default function WatchlistDelete(props) {
   const watchlist = props.watchlist;
+  const token = props.token;
+  const user = props.user;
   const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
-
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -25,7 +26,8 @@ export default function WatchlistDelete(props) {
   };
 
   const handleDelete = () => {
-    dispatch(deleteWatchlist(watchlist._id));
+    dispatch(deleteWatchlist(watchlist._id, token, user.userData.id));
+    // TODO After Delete Update redux store
     setOpen(false);
   };
 

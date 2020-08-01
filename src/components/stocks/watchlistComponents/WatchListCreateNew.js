@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, createMuiTheme } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -12,14 +12,28 @@ import { API_URL, WATCHLIST_CREATE } from "../../constants/constants";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { createWatchlist } from "./../../../actions/watchlistActions";
+import { ThemeProvider } from "@material-ui/styles";
+import { lightGreen } from "@material-ui/core/colors";
+const useStyles = makeStyles((theme) => ({
+  green: {
+    backgroundColor: theme.palette.success,
+  },
+}));
 
-const useStyles = makeStyles((theme) => ({}));
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#64dd17",
+    },
+  },
+});
 
-export default function WatchListCreateNew() {
+export default function WatchListCreateNew(user) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [watchListName, setWatchListName] = React.useState("");
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -29,9 +43,11 @@ export default function WatchListCreateNew() {
   };
 
   const handleCreate = () => {
-    if (watchListName !== "") {
+    console.log("Create User");
+    if (watchListName !== "" && user !== null) {
+      console.log(user);
       setOpen(false);
-      dispatch(createWatchlist(watchListName));
+      dispatch(createWatchlist(watchListName, user));
     }
     // TODO load a snackbar when watchlist has finished creating
   };
@@ -41,14 +57,16 @@ export default function WatchListCreateNew() {
   };
   return (
     <div className={classes.root}>
-      <Button
-        variant="contained"
-        color="primary"
-        size="small"
-        onClick={handleClickOpen}
-      >
-        Create
-      </Button>
+      <ThemeProvider theme={theme}>
+        <Button
+          variant="contained"
+          color="primary"
+          size="small"
+          onClick={handleClickOpen}
+        >
+          Create
+        </Button>
+      </ThemeProvider>
       <Dialog
         open={open}
         onClose={handleClose}
@@ -68,10 +86,10 @@ export default function WatchListCreateNew() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancel} color="primary">
+          <Button onClick={handleCancel} color="inherit">
             Cancel
           </Button>
-          <Button onClick={handleCreate} color="primary">
+          <Button onClick={handleCreate} color="inherit">
             Create
           </Button>
         </DialogActions>

@@ -14,3 +14,34 @@ To run the mongoDB go to "C:\Program Files\MongoDB\Server\4.2\bin" and run mongo
  
  TODO
   - Add react transition group
+  
+Project Plan frontend:
+
+HOME
+  - Show exchanges and indexes: SP 500, SP/TSX, DOW, NASDAQ, CAD/USD, Crude Oil, BTC etc.
+	- Update every 1min? (slower or faster?)
+  LOGGED_IN
+	- Show Watchlist, add watchlist, add symbols to watchlist, delete symbols, delete watchlist
+	- Show Portfolios, Link to the PORTFOLIO page
+	- Show biggest gain stocks of day
+	- Show biggest loss stocks of day
+  LOGGED_OUT
+	- Show Welcome page
+	- Show biggest gain stocks of day
+	- Show biggest loss stocks of day
+PORTFOLIO (Logged In Only)
+	- Show Portfolios
+		- allow edits, add symbols, add positions, graph
+		- Show info of a individual stock
+EXPLORE
+	- Show some random stock with data and news. Maybe webcrawl some most talked stock of that day?
+	
+STOCK
+	- Stock info, Company rating(Buy or Sell), price, option to add to a watchlist
+
+FORUM
+	LOGGED_IN
+	- Post and comment
+	
+	LOGGED_OUT
+	- Only view posts

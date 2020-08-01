@@ -14,15 +14,18 @@ passport.use(
       try {
         const user = await UserModel.findOne({ email });
         if (!user) {
-          return done(null, false, { message: "User Not Found" });
+          return done(null, false, { message: "User Not Found", code: 400 });
         }
 
         const validate = await bcrypt.compare(password, user.password);
         if (!validate) {
-          return done(null, false, { message: "Invalid Password" });
+          return done(null, false, { message: "Invalid Password", code: 400 });
         }
 
-        return done(null, user, { message: "Logged In Successfully" });
+        return done(null, user, {
+          message: "Logged In Successfully",
+          code: 200,
+        });
       } catch (err) {
         return done(err);
       }
@@ -38,15 +41,19 @@ passport.use(
     },
     function (jwt_payload, done) {
       console.log(jwt_payload.id);
-      UserModel.findOneById(jwt_payload.id, function (err, user) {
+      UserModel.findById(jwt_payload.id, function (err, user) {
         if (err) {
-          return done(err, false, { message: "error occured" });
+          return done(err, false, { message: "error occured", code: 400 });
         }
         if (user) {
-          return done(null, user, { message: "Token authenticated" });
+          return done(null, user, {
+            message: "Token authenticated",
+            code: 200,
+          });
         } else {
           return done(null, false, {
             message: "Invalid Token or User does not exist",
+            code: 400,
           });
         }
       });
