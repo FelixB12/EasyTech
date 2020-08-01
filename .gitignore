@@ -9,6 +9,9 @@
 /backend/.pnp
 /backend/.pnp.js
 
+# Hide Notes
+Notes
+
 # testing
 /coverage
 /backend/coverage
