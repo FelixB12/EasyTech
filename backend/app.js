@@ -5,12 +5,11 @@ const app = express();
 const morgan = require("morgan"); // For logging requests
 const mongoose = require("mongoose");
 const passport = require("passport");
-
+const authenticate = require("./auth/auth");
 // Passport
 app.use(passport.initialize());
 
 // TODO add additional api routes here
-const productRoutes = require("./api/routes/products");
 const stocksRoutes = require("./api/routes/stocks");
 const watchlistRoutes = require("./api/routes/watchlist");
 const usersRoutes = require("./api/routes/users");
@@ -52,10 +51,14 @@ app.use(express.json());
 // Routes which should handle requests
 // TODO Add additonal routes
 // TODO add cookieParser() ???
-app.use("/products", productRoutes); // When URI start with 'products' use the productRoutes
 app.use("/stocks", stocksRoutes); // When URI start with 'stocks' use the stocksRoutes
-app.use("/watchlist", watchlistRoutes);
+app.use(
+  "/watchlist",
+  authenticate.authenticate("jwt", { session: false }),
+  watchlistRoutes
+);
 app.use("/users", usersRoutes);
+
 // ERROR HANDLING
 // Anything that goes past the above means that there was nothing suitable found to handle the requests so we error handle them here
 app.use((req, res, next) => {

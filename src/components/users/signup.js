@@ -12,8 +12,8 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import Copyright from "../common/copyright";
-import { useInput } from "../inputforms/customHookInputForm";
+import Copyright from "../common/Copyright";
+import { useInput } from "../inputforms/CustomHookInputForm";
 import axios from "axios";
 import { API_URL } from "../constants/constants";
 const useStyles = makeStyles((theme) => ({

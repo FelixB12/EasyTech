@@ -11,9 +11,14 @@ import Snackbar from "@material-ui/core/Snackbar";
 import { API_URL, WATCHLIST_CREATE } from "../../constants/constants";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { createWatchlist } from "./../../../actions/watchlistActions";
+import { createWatchlist } from "../../../actions/WatchlistActions";
 import { ThemeProvider } from "@material-ui/styles";
 import { lightGreen } from "@material-ui/core/colors";
+import PlaylistAddIcon from "@material-ui/icons/PlaylistAdd";
+import IconButton from "@material-ui/core/IconButton";
+import Grid from "@material-ui/core/Grid";
+import Title from "../../common/Title";
+
 const useStyles = makeStyles((theme) => ({
   green: {
     backgroundColor: theme.palette.success,
@@ -57,7 +62,7 @@ export default function WatchListCreateNew(user) {
   };
   return (
     <div className={classes.root}>
-      <ThemeProvider theme={theme}>
+      {/* <ThemeProvider theme={theme}>
         <Button
           variant="contained"
           color="primary"
@@ -66,7 +71,18 @@ export default function WatchListCreateNew(user) {
         >
           Create
         </Button>
-      </ThemeProvider>
+      </ThemeProvider> */}
+      <Grid container spacing={2}>
+        <Grid item>
+          <Title>Watchlists</Title>
+        </Grid>
+        <Grid item>
+          <IconButton size="small">
+            <PlaylistAddIcon onClick={handleClickOpen} />
+          </IconButton>
+        </Grid>
+      </Grid>
+
       <Dialog
         open={open}
         onClose={handleClose}

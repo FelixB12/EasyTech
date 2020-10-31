@@ -42,8 +42,9 @@ router.post("/create", (req, res, next) => {
     }
   });
 });
+
 /**
- * Add/Remove Symbols in Watch List
+ * Add Symbols in Watchlist
  */
 router.patch("/addSymbol", (req, res, next) => {
   // TODO Get the watchlist from the user model and add the symble there
@@ -139,11 +140,9 @@ router.patch("/removeSymbol", (req, res, next) => {
 /**
  * Delete Watchlist from database
  */
-// TODO remove watchlist from user('userWatchlists'), Check query populate
+// TODO remove watchlist from user('watchlists')
 router.delete("/deleteWatchlist", (req, res, next) => {
-  const id = req.query.watchlistId; //Watchlist id
-  const userId = req.query.userId;
-  // TODO Fix deleteWatchlist properly
+  const id = req.query.watchlistId;
   Watchlist.findByIdAndDelete({ _id: id })
     .then((result) => {
       console.log(result);
@@ -153,87 +152,51 @@ router.delete("/deleteWatchlist", (req, res, next) => {
       console.log("Error Deleting Watchlist");
       res.status(500).json("Error Deleting");
     });
-
-  /*
-          User.findByIdAndUpdate({ _id: userId }, { $pull: { watchlists: id } })
-        .then((res) => {
-          console.log("Updated");
-          res.status(200).json("Watchlist From User Deleted");
-        })
-        .catch((err) => {
-          res.status(500).json("Error Deleting");
-        });
-
-    */
 });
 
 /**
- * Get single Watchlist
+ * Get single Watchlist based on ID
+ * @Request GET
  */
 router.get("/getSingleWatchlist/:watchlistId", (req, res, next) => {
-  const id = req.query.watchlistId;
-  console.log("ID: " + id);
-  Watchlist.find({ _id: id }, "watchlistSymbols watchlistName")
-    .then((result) => {
-      console.log(result);
-      res.status(200).json(result);
-    })
-    .catch((err) => {
-      console.log("ID: " + id);
-      console.log(err);
-      res.status(500).json(err);
-    });
+  if (req.user) {
+    const id = req.query.watchlistId;
+    console.log("ID: " + id);
+    Watchlist.find({ _id: id }, "watchlistSymbols watchlistName")
+      .then((result) => {
+        console.log(result);
+        res.status(200).json(result);
+      })
+      .catch((err) => {
+        console.log("ID: " + id);
+        console.log(err);
+        res.status(500).json(err);
+      });
+  } else {
+    res.json(req.err).status(400);
+  }
 });
 
+// Check https://medium.com/front-end-weekly/learn-using-jwt-with-passport-authentication-9761539c4314
 /**
- * Get All watchlists associated to the user
+ * Gets the watchlists assoicated to the user
+ * @Request GET
  */
-// router.get("/getWatchlists", (req, res, next) => {
-//   passport.authenticate("jwt", function (err, user, info) {
-//     if (err) {
-//       res.json(info);
-//       //return next(err);
-//     }
-//     if (user) {
-//       res.json(info);
-//     } else {
-//       res.json(info);
-//     }
-//     res.json("Success");
-//   })(req, res, next);
-
-//   Watchlist.find()
-//     .then((result) => {
-//       console.log(result);
-//       res.status(200).json(result);
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//       res.status(500).json(err);
-//     });
-// });
-
-// TODO Retrive error when failed to authenticate
 router.get("/getWatchlists", function (req, res, next) {
-  passport.authenticate("jwt", function (err, user, info) {
-    if (err) {
-      //   res.json(info);
-      return next(err);
-    }
-    if (user) {
-      console.log(user);
-      User.findById(user.id)
-        .populate("watchlists")
-        .then((result) => {
-          res.json({
+  if (req.user) {
+    req.user
+      .populate("watchlists")
+      .execPopulate()
+      .then((result) => {
+        res
+          .json({
             watchlists: result.watchlists,
-            info: { code: 200, info },
-          });
-        });
-    } else {
-      res.json({ watchlists: [], info: { code: 400, info } });
-    }
-  })(req, res, next);
+          })
+          .status(200);
+      });
+  } else {
+    res.json(req.err).status(400);
+  }
 });
 
 /**

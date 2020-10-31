@@ -1,14 +1,14 @@
 import React from "react";
 import "./App.css";
-import Navigation from "../header/navigation";
-import Homepage from "../homepage/homepage";
-import SignUp from "../users/signup";
-import SignIn from "../users/signin";
+import Navigation from "../header/Navigation";
+import Homepage from "../homepage/Homepage";
+import SignUp from "../users/Signup";
+import SignIn from "../users/Signin";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { grey, green } from "@material-ui/core/colors";
-import Copyright from "../common/copyright";
+import Copyright from "../common/Copyright";
 function App() {
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
@@ -16,7 +16,7 @@ function App() {
     () =>
       createMuiTheme({
         palette: {
-          //     type: prefersDarkMode ? "dark" : "light",
+          //type: prefersDarkMode ? "dark" : "light",
           primary: {
             main: grey[800],
           },
@@ -27,6 +27,8 @@ function App() {
       }),
     [prefersDarkMode]
   );
+
+  // Check if user is logged in
 
   return (
     <div>

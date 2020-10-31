@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import StockPrice from "./watchlistComponents/stockPrice";
+import StockPrice from "./watchlistComponents/StockPrice";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import axios from "axios";
-import { API_URL, STOCKS_MULTIPLE_SYMBOLS } from "./../constants/constants";
+import { API_URL, STOCKS_MULTIPLE_SYMBOLS } from "../constants/constants";
 import testdata from "../testData/topIndexesTestData.json";
 import Paper from "@material-ui/core/Paper";
 
@@ -30,10 +30,17 @@ export default function TopIndexes() {
   if (stocks) {
     return (
       <div className={classes.root}>
-        <Grid container spacing={1}>
+        <Grid
+          container
+          direction="row"
+          justify="center"
+          alignItems="center"
+          spacing={4}
+          wrap="nowrap"
+        >
           {Object.keys(stocks).map((key, i) => (
             <div>
-              <Grid item s={1}>
+              <Grid item xs={12}>
                 <StockPrice
                   symbol={stocks[key].symbol}
                   price={stocks[key].price}

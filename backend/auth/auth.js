@@ -40,7 +40,6 @@ passport.use(
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
     },
     function (jwt_payload, done) {
-      console.log(jwt_payload.id);
       UserModel.findById(jwt_payload.id, function (err, user) {
         if (err) {
           return done(err, false, { message: "error occured", code: 400 });

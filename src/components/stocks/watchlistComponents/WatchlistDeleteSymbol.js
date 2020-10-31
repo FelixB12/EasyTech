@@ -6,21 +6,21 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import IconButton from "@material-ui/core/IconButton";
-import DeleteIcon from "@material-ui/icons/Delete";
 import { useDispatch } from "react-redux";
-import { deleteWatchlist } from "../../../actions/WatchlistActions";
-
+import RemoveIcon from "@material-ui/icons/Remove";
+import TextField from "@material-ui/core/TextField";
 const deleteButtonStyle = {
   color: "red",
 };
 
-export default function WatchlistDelete(props) {
+export default function WatchlistDeleteSymbol(props) {
   const watchlist = props.watchlist;
+  const symbol = props.symbol;
   const token = props.token;
   const user = props.user;
   const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
-  const handleClickOpen = () => {
+  const handleRemoveSymbolOpen = () => {
     setOpen(true);
   };
 
@@ -32,20 +32,21 @@ export default function WatchlistDelete(props) {
     setOpen(false);
   };
 
-  const handleDelete = () => {
-    dispatch(deleteWatchlist(watchlist._id, token, user.userData.id));
-    // TODO After Delete Update redux store
+  const handleAdd = () => {
+    // Call API to handle add sumbol
+    // make sure to verify user
+    // TODO Update redux store after remove
     setOpen(false);
   };
 
   return (
     <div>
       <IconButton size="small">
-        <DeleteIcon
+        <RemoveIcon
           variant="contained"
           style={deleteButtonStyle}
           size="small"
-          onClick={handleClickOpen}
+          onClick={handleRemoveSymbolOpen}
         />
       </IconButton>
       <Dialog
@@ -53,19 +54,15 @@ export default function WatchlistDelete(props) {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Delete Watchlist</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete watchlist "{watchlist.watchlistName}
-            "?
-          </DialogContentText>
-        </DialogContent>
+        <DialogTitle id="form-dialog-title">
+          Delete Symbol "{symbol}" from Watchlist: "{watchlist.watchlistName}"?
+        </DialogTitle>
         <DialogActions>
           <Button onClick={handleCancel} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleDelete} color="primary">
-            Yes
+          <Button onClick={handleAdd} color="primary">
+            Ok
           </Button>
         </DialogActions>
       </Dialog>

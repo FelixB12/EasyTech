@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
-import watchlistsReducer from "./watchlistsReducer";
-import userReducer from "./userReducer";
+import watchlistsReducer from "./WatchlistsReducer";
+import userReducer from "./UserReducer";
 import storage from "redux-persist/lib/storage";
 /**
  * Add all Reducers here

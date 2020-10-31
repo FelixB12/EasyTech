@@ -3,7 +3,7 @@ import {
   CREATE_WATCHLIST,
   DELETE_WATCHLIST,
   WATCHLISTS_LOADING,
-} from "./../actions/constants";
+} from "../actions/constants";
 import watchlistData from "../components/testData/watchlistData.json";
 const initalState = {
   //watchlists: watchlistData,

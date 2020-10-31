@@ -13,11 +13,11 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import axios from "axios";
-import { useInput } from "./../inputforms/customHookInputForm";
-import { API_URL, USER_AUTH } from "./../constants/constants";
+import { useInput } from "../inputforms/CustomHookInputForm";
+import { API_URL, USER_AUTH } from "../constants/constants";
 import { useDispatch } from "react-redux";
-import { authenticateUser } from "../../actions/userActions";
-import { getWatchlists } from "../../actions/watchlistActions";
+import { authenticateUser } from "../../actions/UserActions";
+import { getWatchlists } from "../../actions/WatchlistActions";
 import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -92,8 +92,13 @@ export default function SignIn() {
           }
         })
         .catch((err) => {
+          setErrMessage("Unexpected error, please try again");
           console.log(err);
         });
+    } else {
+      setSuccessMessage("");
+      setErrMessage("Please enter Email and Password");
+      // TODO clear email and password
     }
   };
 

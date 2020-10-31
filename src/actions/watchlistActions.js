@@ -4,13 +4,13 @@ import {
   CREATE_WATCHLIST,
   DELETE_WATCHLIST,
   WATCHLISTS_LOADING,
+  LOGOUT,
 } from "./constants";
 import {
   API_URL,
-  GET_SINGLE_WATCHLIST,
   WATCHLIST_CREATE,
-  COMPANY_QUOTES,
   WATCHLIST_DELETE,
+  ADD_SYMBOL,
 } from "../components/constants/constants";
 
 export const getWatchlists = (token) => (dispatch) => {
@@ -28,13 +28,20 @@ export const getWatchlists = (token) => (dispatch) => {
       });
     })
     .catch((err) => {
+      // TODO Check if the User was actually authenticated by the server, if not logout
+
       console.log(err);
     });
 };
 
 export const deleteWatchlist = (watchlistId, token, userId) => (dispatch) => {
+  const configBearer = { headers: { Authorization: "Bearer " + token } };
+
   axios
-    .delete(API_URL + WATCHLIST_DELETE + watchlistId + "&userId=" + userId)
+    .delete(
+      API_URL + WATCHLIST_DELETE + watchlistId + "&userId=" + userId,
+      configBearer
+    )
     .then((res) => {
       dispatch({
         type: DELETE_WATCHLIST,
@@ -48,13 +55,23 @@ export const deleteWatchlist = (watchlistId, token, userId) => (dispatch) => {
 };
 
 export const createWatchlist = (watchListName, user) => (dispatch) => {
-  axios
-    .post(API_URL + WATCHLIST_CREATE, {
-      watchlistName: watchListName,
-      userId: user.user.userData.id,
+  console.log(user);
 
-      // TODO Add to what user to save
-    })
+  const configBearer = {
+    headers: { Authorization: "Bearer " + user.user.token },
+  };
+
+  axios
+    .post(
+      API_URL + WATCHLIST_CREATE,
+      {
+        watchlistName: watchListName,
+        userId: user.user.userData.id,
+
+        // TODO Add to what user to save
+      },
+      configBearer
+    )
     .then((res) => {
       dispatch({
         type: CREATE_WATCHLIST,
@@ -63,7 +80,11 @@ export const createWatchlist = (watchListName, user) => (dispatch) => {
     })
     .catch((err) => {
       console.log(err);
-      // TODO let user know failed to save
+      if (err.status === 401) {
+        // Unauthorized
+        // Logout the user
+        dispatch({ type: LOGOUT });
+      }
     });
   //dispatch(getWatchlists(user.user.token));
 };
@@ -72,4 +93,26 @@ export const setWatchlistsLoading = () => {
   return {
     type: WATCHLISTS_LOADING,
   };
+};
+
+export const addSymbol = (watchlistId, watchlistSymbol, token) => (
+  dispatch
+) => {
+  const configBearer = {
+    headers: { Authorization: "Bearer " + token },
+  };
+  // User exists
+  axios
+    .patch(
+      API_URL + ADD_SYMBOL,
+      {
+        id: watchlistId,
+        watchlistSymbol: watchlistSymbol,
+      },
+      configBearer
+    )
+    .then((res) => {
+      dispatch(getWatchlists(token));
+    })
+    .catch();
 };

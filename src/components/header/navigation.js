@@ -35,11 +35,14 @@ export default function Navigation() {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const classes = useStyles();
+
+  useEffect(() => {}, [user.token, user.loggedIn]);
+
   const Signout = (loggedIn, dispatch) => {
-    if (loggedIn) {
-      dispatch({ type: "USER_LOGOUT" });
-      history.push("/Home");
-    }
+    //if (loggedIn) {
+    dispatch({ type: "USER_LOGOUT" });
+    history.push("/Home");
+    //}
   };
 
   const ShowUserAction = (loggedIn, dispatch) => {

@@ -3,4 +3,4 @@ export const CREATE_WATCHLIST = "CREATE_WATCHLIST";
 export const DELETE_WATCHLIST = "DELETE_WATCHLIST";
 export const WATCHLISTS_LOADING = "WATCHLISTS_LOADING";
 export const LOGIN = "LOGIN";
-export const LOGOUT = "LOGOUT";
+export const LOGOUT = "USER_LOGOUT";

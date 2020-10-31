@@ -1,10 +1,9 @@
 import React, { useEffect } from "react";
-import WatchListCreateNew from "./WatchListCreateNew";
-import WatchlistDelete from "./WatchlistDelete";
-import WatchList from "./watchList";
-import Title from "../../common/Title";
+import WatchListCreateNew from "./WatchlistCreateNew";
+import WatchList from "./Watchlist";
 import { useSelector, useDispatch } from "react-redux";
-import { getWatchlists } from "../../../actions/watchlistActions";
+import { getWatchlists } from "../../../actions/WatchlistActions";
+import WatchListActions from "./WatchlistActions";
 
 const WatchListLoad = () => {
   const watchlistsData = useSelector((state) => state.watchlists); // TODO "watchlists" on the last line here is it correct in json?
@@ -15,7 +14,6 @@ const WatchListLoad = () => {
   useEffect(() => {
     // Refresh watchlist data
     dispatch(getWatchlists(user.token));
-    console.log("getWatchlists called");
   }, [refreshWatchlist, user.token, dispatch]);
 
   if (
@@ -29,18 +27,19 @@ const WatchListLoad = () => {
         {console.log(watchlistsData.watchlists)}
         {watchlistsData.watchlists.map((watchList) => (
           <div>
-            <WatchlistDelete
+            <WatchListActions
               watchlist={watchList}
               token={user.token}
               user={user}
             />
-            <Title>{watchList.watchlistName}</Title>
-            <WatchList watchlistSymbols={watchList.watchlistSymbols} />
+            <WatchList watchlist={watchList} user={user} />
             <br />
           </div>
         ))}
       </div>
     );
+  else if (user.loggedIn && watchlistsData.loading === true)
+    return <div>Watchlist loading...</div>;
   else return <div> Sign In to create a watchlist</div>;
 };
 
